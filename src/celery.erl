@@ -190,7 +190,7 @@ handle_info({#'basic.deliver'{delivery_tag = DeliveryTag,
 			   channel = Chan}
 	   ) ->
 
-    {Reply} = ejson:decode(Payload),
+    Reply = jsx:decode(Payload),
     Result = #celery_res{
       task_id   = proplists:get_value(<<"task_id">>, Reply),
       status    = proplists:get_value(<<"status">>, Reply),
@@ -278,7 +278,7 @@ setup_reply_queue(#state{channel = Channel, reply_queue = Q}) ->
     #'queue.declare_ok'{} =
         amqp_channel:call(Channel,
                           #'queue.declare'{
-                                queue = Q, durable = false, auto_delete = true,
+                                queue = Q, durable = true, auto_delete = true,
                                 arguments = [{<<"x-expires">>, signedint,
                                               86400000}]}).
 
@@ -292,12 +292,12 @@ msg_to_json(#celery_msg{id = Id,
 			kwargs = Kwargs,
 			retries = Retries,
 			eta = Eta}) ->
-    M = {[
+    M = [
 	  {id, Id},
 	  {task, Task},
 	  {args, Args},
 	  {kwargs, Kwargs},
 	  {retries, Retries},
 	  {eta, Eta}
-	 ]},
-    ejson:encode(M).
+	 ],
+    jsx:encode(M).

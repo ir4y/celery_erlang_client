@@ -2,7 +2,7 @@
 -record(celery_msg, {id      = null,
 		     task    = null,
 		     args    = [],
-		     kwargs  = {[]},
+		     kwargs  = [{}],
 		     retries = 0,
 		     eta     = null}).
 

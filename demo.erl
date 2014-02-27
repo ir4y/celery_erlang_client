@@ -17,7 +17,7 @@ start_celery_app() ->
     celery_app:start().
 
 add(A, B) ->
-    Msg = #celery_msg{task= <<"documents.tasks.add">>, args=[A,B]},
+    Msg = #celery_msg{task= <<"tasks.add">>, args=[A,B]},
     celery:call(Msg).
 
 safe_add(A, B) ->
@@ -69,12 +69,12 @@ msg_to_json(#celery_msg{id = Id,
 			kwargs = Kwargs,
 			retries = Retries,
 			eta = Eta}) ->
-    M = {[
+    M = [
 	  {id, Id},
 	  {task, Task},
 	  {args, Args},
 	  {kwargs, Kwargs},
 	  {retries, Retries},
 	  {eta, Eta}
-	 ]},
+	 ],
     json:encode(M).
